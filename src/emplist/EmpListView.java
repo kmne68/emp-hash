@@ -5,7 +5,7 @@
 package emplist;
 
 import business.Employee;
-import business.empIO;
+import business.EmpIO;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
@@ -13,12 +13,16 @@ import org.jdesktop.application.FrameView;
 import org.jdesktop.application.TaskMonitor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -27,11 +31,29 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class EmpListView extends FrameView {
     
     Map<Long, Employee> emps; // Map is superclass, we're instantiating with a Hashmap or Treemap (inheritance)
+    JTextField[] fields;
+    boolean loading = false;
+    Map<String, JTextField> screenmap;
 
     public EmpListView(SingleFrameApplication app) {
         super(app);
 
         initComponents();
+        
+        JTextField[] fld = {jtxtEmpNo, jtxtLastNm, jtxtFirstNm,
+            jtxtMiddleNm, jtxtSuffix, jtxtAddr1, jtxtAddr2, jtxtCity,
+            jtxtState, jtxtZip, jtxtPhone, jtxtGender, jtxtStatus,
+            jtxtHireDt, jtxtTerminateDt, jtxtPayCd };
+        fields = fld;
+        
+        screenmap = new HashMap<>();
+        for(JTextField f : fields) {
+            // want screenmap to map a get method name
+            String getnm = "get" + f.getName().substring(4); // begin in JTextField name after the jtxt portion
+            screenmap.put(getnm, f);
+        }
+        
+        
         // status bar initialization - message timeout, idle icon and busy animation, etc
         ResourceMap resourceMap = getResourceMap();
         int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
@@ -120,7 +142,7 @@ public class EmpListView extends FrameView {
         jLabel4 = new javax.swing.JLabel();
         jtxtFirstNm = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jtxtMidNm = new javax.swing.JTextField();
+        jtxtMiddleNm = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jtxtSuffix = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
@@ -141,7 +163,7 @@ public class EmpListView extends FrameView {
         jLabel14 = new javax.swing.JLabel();
         jtxtHireDt = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
-        jtxtTermDt = new javax.swing.JTextField();
+        jtxtTerminateDt = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
         jtxtPayCd = new javax.swing.JTextField();
         menuBar = new javax.swing.JMenuBar();
@@ -163,6 +185,11 @@ public class EmpListView extends FrameView {
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(emplist.EmpListApp.class).getContext().getResourceMap(EmpListView.class);
         jradHashMap.setText(resourceMap.getString("jradHashMap.text")); // NOI18N
         jradHashMap.setName("jradHashMap"); // NOI18N
+        jradHashMap.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jradHashMapItemStateChanged(evt);
+            }
+        });
 
         buttonGroup1.add(jradTreeMap);
         jradTreeMap.setText(resourceMap.getString("jradTreeMap.text")); // NOI18N
@@ -175,6 +202,11 @@ public class EmpListView extends FrameView {
 
         cmbKeys.setFont(resourceMap.getFont("cmbKeys.font")); // NOI18N
         cmbKeys.setName("cmbKeys"); // NOI18N
+        cmbKeys.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cmbKeysItemStateChanged(evt);
+            }
+        });
 
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setToolTipText(resourceMap.getString("jLabel1.toolTipText")); // NOI18N
@@ -208,7 +240,7 @@ public class EmpListView extends FrameView {
         jLabel5.setToolTipText(resourceMap.getString("jLabel5.toolTipText")); // NOI18N
         jLabel5.setName("jLabel5"); // NOI18N
 
-        jtxtMidNm.setName("jtxtMidNm"); // NOI18N
+        jtxtMiddleNm.setName("jtxtMiddleNm"); // NOI18N
 
         jLabel6.setFont(resourceMap.getFont("jLabel6.font")); // NOI18N
         jLabel6.setText(resourceMap.getString("jLabel6.text")); // NOI18N
@@ -280,7 +312,7 @@ public class EmpListView extends FrameView {
         jLabel15.setToolTipText(resourceMap.getString("jLabel15.toolTipText")); // NOI18N
         jLabel15.setName("jLabel15"); // NOI18N
 
-        jtxtTermDt.setName("jtxtTermDt"); // NOI18N
+        jtxtTerminateDt.setName("jtxtTerminateDt"); // NOI18N
 
         jLabel16.setFont(resourceMap.getFont("jLabel16.font")); // NOI18N
         jLabel16.setText(resourceMap.getString("jLabel16.text")); // NOI18N
@@ -332,7 +364,7 @@ public class EmpListView extends FrameView {
                                         .addGap(18, 18, 18)
                                         .addComponent(jLabel15)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jtxtTermDt, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jtxtTerminateDt, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGap(183, 183, 183)
                                         .addComponent(jLabel12)
@@ -358,7 +390,7 @@ public class EmpListView extends FrameView {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
-                            .addComponent(jtxtMidNm, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jtxtMiddleNm, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel6)
@@ -383,7 +415,7 @@ public class EmpListView extends FrameView {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addGap(3, 3, 3)
-                        .addComponent(jtxtMidNm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jtxtMiddleNm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(3, 3, 3)
@@ -426,7 +458,7 @@ public class EmpListView extends FrameView {
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel14)
                         .addComponent(jLabel15)
-                        .addComponent(jtxtTermDt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jtxtTerminateDt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jtxtHireDt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(12, Short.MAX_VALUE))
         );
@@ -550,7 +582,7 @@ public class EmpListView extends FrameView {
         // do load then choose button
         buttonGroup1.clearSelection();
         
-        // clear form
+        clearForm();
         JFileChooser f = new JFileChooser(".");
         f.setDialogTitle("Select Employee File");
         FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV File (.csv)", "csv");
@@ -562,11 +594,90 @@ public class EmpListView extends FrameView {
             statusMessageLabel.setText("Open canceled.");            
         } else {
             // read and return hashmap of file contents
-            this.emps = empIO.getEmps(f.getSelectedFile().getAbsolutePath());
+            this.emps = EmpIO.getEmps(f.getSelectedFile().getAbsolutePath());
             statusMessageLabel.setText("Size of emps = " + emps.size());
         }
     }//GEN-LAST:event_jmnuLoadCSVActionPerformed
 
+    private void jradHashMapItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jradHashMapItemStateChanged
+        
+        if(jradHashMap.isSelected()) {
+            // clear form
+            clearForm();
+            cmbKeys_build(); // build the combo box with the hashmap keys
+        }
+    }//GEN-LAST:event_jradHashMapItemStateChanged
+
+    private void cmbKeysItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbKeysItemStateChanged
+        
+        if(loading) {
+            return;
+        }
+        statusMessageLabel.setText("");
+        if(cmbKeys.getSelectedIndex() == -1) {
+            statusMessageLabel.setText("No employee selected");
+            return;
+        }
+        Employee emp = null;
+        if(jradHashMap.isSelected()) {
+            Long eno = (Long) cmbKeys.getSelectedItem();
+            emp = (Employee) emps.get(eno);            
+        }
+        DisplayValues(emp);
+    }//GEN-LAST:event_cmbKeysItemStateChanged
+
+    
+    
+    private void cmbKeys_build() {
+        
+        loading = true;
+        cmbKeys.removeAllItems();
+        
+        if (jradHashMap.isSelected()) {
+            ArrayList<Long> keys = new ArrayList<>(emps.keySet());
+            for (Long k : keys) {
+                cmbKeys.addItem(k);
+            }
+            cmbKeys.setSelectedIndex(-1); // default state is no selection
+        }
+        loading = false;
+    }
+    
+    
+    private void DisplayValues(Employee emp) {
+        
+        clearForm();
+        // use reflection must obtain class definition for the object
+        Class empclass = emp.getClass();
+        Method[] methods = empclass.getMethods();
+        
+        try {
+            for(Method m : methods) {
+                if(screenmap.containsKey(m.getName())) {
+                    JTextField f = screenmap.get(m.getName());
+                    switch (m.getName() ) {
+                        case "getEmpNo":
+                        case "getPhone":
+                            Long eno = (Long) m.invoke(emp);
+                            f.setText(String.valueOf(eno));
+                            break;
+                        case "getPayCd":
+                            int phn = (int) m.invoke(emp);
+                            f.setText(String.valueOf(phn));
+                            break;
+                        default:
+                            String v = (String) m.invoke(emp);
+                            f.setText(v);
+                            break;
+                    } // end switch
+                } // end if
+            } // end for
+        } catch (Exception e) {
+            statusMessageLabel.setText("Get Method error:" + e.getMessage());
+        }
+    }
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox cmbKeys;
@@ -599,13 +710,13 @@ public class EmpListView extends FrameView {
     private javax.swing.JTextField jtxtGender;
     private javax.swing.JTextField jtxtHireDt;
     private javax.swing.JTextField jtxtLastNm;
-    private javax.swing.JTextField jtxtMidNm;
+    private javax.swing.JTextField jtxtMiddleNm;
     private javax.swing.JTextField jtxtPayCd;
     private javax.swing.JTextField jtxtPhone;
     private javax.swing.JTextField jtxtState;
     private javax.swing.JTextField jtxtStatus;
     private javax.swing.JTextField jtxtSuffix;
-    private javax.swing.JTextField jtxtTermDt;
+    private javax.swing.JTextField jtxtTerminateDt;
     private javax.swing.JTextField jtxtZip;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
@@ -622,4 +733,11 @@ public class EmpListView extends FrameView {
     private int busyIconIndex = 0;
 
     private JDialog aboutBox;
+    
+    public void clearForm() {
+        
+        for(JTextField f : fields) {
+            f.setText("");
+        }
+    }
 }

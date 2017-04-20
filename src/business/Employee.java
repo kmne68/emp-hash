@@ -40,14 +40,14 @@ public class Employee {
     /**
      * @return the empno
      */
-    public long getEmpno() {
+    public long getEmpNo() {
         return empno;
     }
 
     /**
      * @param empno the empno to set
      */
-    public void setEmpno(long empno) {
+    public void setEmpNo(long empno) {
         this.empno = empno;
     }
 
@@ -68,42 +68,42 @@ public class Employee {
     /**
      * @return the lastnm
      */
-    public String getLastnm() {
+    public String getLastNm() {
         return lastnm;
     }
 
     /**
      * @param lastnm the lastnm to set
      */
-    public void setLastnm(String lastnm) {
+    public void setLastNm(String lastnm) {
         this.lastnm = lastnm;
     }
 
     /**
      * @return the firstnm
      */
-    public String getFirstnm() {
+    public String getFirstNm() {
         return firstnm;
     }
 
     /**
      * @param firstnm the firstnm to set
      */
-    public void setFirstnm(String firstnm) {
+    public void setFirstNm(String firstnm) {
         this.firstnm = firstnm;
     }
 
     /**
      * @return the middlenm
      */
-    public String getMiddlenm() {
+    public String getMiddleNm() {
         return middlenm;
     }
 
     /**
      * @param middlenm the middlenm to set
      */
-    public void setMiddlenm(String middlenm) {
+    public void setMiddleNm(String middlenm) {
         this.middlenm = middlenm;
     }
 
@@ -222,42 +222,42 @@ public class Employee {
     /**
      * @return the hiredt
      */
-    public String getHiredt() {
+    public String getHireDt() {
         return hiredt;
     }
 
     /**
      * @param hiredt the hiredt to set
      */
-    public void setHiredt(String hiredt) {
+    public void setHireDt(String hiredt) {
         this.hiredt = hiredt;
     }
 
     /**
      * @return the terminateddt
      */
-    public String getTerminateddt() {
+    public String getTerminateDt() {
         return terminateddt;
     }
 
     /**
      * @param terminateddt the terminateddt to set
      */
-    public void setTerminateddt(String terminateddt) {
+    public void setTerminateDt(String terminateddt) {
         this.terminateddt = terminateddt;
     }
 
     /**
      * @return the paycd
      */
-    public int getPaycd() {
+    public int getPayCd() {
         return paycd;
     }
 
     /**
      * @param paycd the paycd to set
      */
-    public void setPaycd(int paycd) {
+    public void setPayCd(int paycd) {
         this.paycd = paycd;
     }
     

@@ -63,6 +63,9 @@
             <Property name="text" type="java.lang.String" resourceKey="jradHashMap.text"/>
             <Property name="name" type="java.lang.String" value="jradHashMap" noResource="true"/>
           </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="jradHashMapItemStateChanged"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JRadioButton" name="jradTreeMap">
           <Properties>
@@ -91,6 +94,9 @@
             </Property>
             <Property name="name" type="java.lang.String" value="cmbKeys" noResource="true"/>
           </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cmbKeysItemStateChanged"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
@@ -155,7 +161,7 @@
                                               <EmptySpace type="separate" max="-2" attributes="0"/>
                                               <Component id="jLabel15" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="jtxtTermDt" min="-2" pref="83" max="-2" attributes="0"/>
+                                              <Component id="jtxtTerminateDt" min="-2" pref="83" max="-2" attributes="0"/>
                                           </Group>
                                           <Group type="102" alignment="1" attributes="0">
                                               <EmptySpace min="-2" pref="183" max="-2" attributes="0"/>
@@ -190,7 +196,7 @@
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jtxtMidNm" alignment="0" min="-2" pref="51" max="-2" attributes="0"/>
+                                  <Component id="jtxtMiddleNm" alignment="0" min="-2" pref="51" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -224,7 +230,7 @@
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
-                              <Component id="jtxtMidNm" min="-2" max="-2" attributes="0"/>
+                              <Component id="jtxtMiddleNm" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
@@ -277,7 +283,7 @@
                           <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                               <Component id="jLabel14" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel15" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jtxtTermDt" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jtxtTerminateDt" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jtxtHireDt" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -333,9 +339,9 @@
                 <Property name="name" type="java.lang.String" value="jLabel5" noResource="true"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="jtxtMidNm">
+            <Component class="javax.swing.JTextField" name="jtxtMiddleNm">
               <Properties>
-                <Property name="name" type="java.lang.String" value="jtxtMidNm" noResource="true"/>
+                <Property name="name" type="java.lang.String" value="jtxtMiddleNm" noResource="true"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel6">
@@ -468,9 +474,9 @@
                 <Property name="name" type="java.lang.String" value="jLabel15" noResource="true"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="jtxtTermDt">
+            <Component class="javax.swing.JTextField" name="jtxtTerminateDt">
               <Properties>
-                <Property name="name" type="java.lang.String" value="jtxtTermDt" noResource="true"/>
+                <Property name="name" type="java.lang.String" value="jtxtTerminateDt" noResource="true"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel16">
