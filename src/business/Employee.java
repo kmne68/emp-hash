@@ -47,7 +47,7 @@ public class Employee {
     /**
      * @param empno the empno to set
      */
-    public void setEmpNo(long empno) {
+    public void setEmpNo(Long empno) {
         this.empno = empno;
     }
 
@@ -61,7 +61,7 @@ public class Employee {
     /**
      * @param phone the phone to set
      */
-    public void setPhone(long phone) {
+    public void setPhone(Long phone) {
         this.phone = phone;
     }
 
@@ -257,7 +257,7 @@ public class Employee {
     /**
      * @param paycd the paycd to set
      */
-    public void setPayCd(int paycd) {
+    public void setPayCd(Integer paycd) {
         this.paycd = paycd;
     }
     
