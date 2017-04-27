@@ -7,8 +7,11 @@ package business;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -84,5 +87,28 @@ public class EmpIO {
             // no action, just return the HashMap as it is, could send it up the chain to the calling method
         }
         return empList;
+    }
+
+    public static String setEmps(String absolutePath, Map<Long, Employee> emps) {
+
+        String msg = "";
+        int empsout = 0;
+
+        // employee object manages its own data lock
+        try {
+            PrintWriter out = new PrintWriter(new FileWriter(absolutePath));
+            Iterator<Map.Entry<Long, Employee>> it = emps.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<Long, Employee> entry = it.next();
+                out.println(entry.getValue().toString());
+                empsout++;
+            }
+            out.close();
+            msg = "Employees saved to CSV = " + empsout;
+            // must output header line
+        } catch (Exception e) {
+            msg = "Save Error: " + e.getMessage();
+        }
+        return msg;
     }
 }

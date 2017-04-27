@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
@@ -31,6 +32,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class EmpListView extends FrameView {
     
     Map<Long, Employee> emps; // Map is superclass, we're instantiating with a Hashmap or Treemap (inheritance)
+    Map<String, Employee> empsByName;
     JTextField[] fields;
     boolean loading = false;
     Map<String, JTextField> screenmap;
@@ -166,9 +168,11 @@ public class EmpListView extends FrameView {
         jtxtTerminateDt = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
         jtxtPayCd = new javax.swing.JTextField();
+        jbtnNext = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         jmnuLoadCSV = new javax.swing.JMenuItem();
+        jmnuSaveCSV = new javax.swing.JMenuItem();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
@@ -195,10 +199,20 @@ public class EmpListView extends FrameView {
         jradTreeMap.setText(resourceMap.getString("jradTreeMap.text")); // NOI18N
         jradTreeMap.setToolTipText(resourceMap.getString("jradTreeMap.toolTipText")); // NOI18N
         jradTreeMap.setName("jradTreeMap"); // NOI18N
+        jradTreeMap.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jradTreeMapItemStateChanged(evt);
+            }
+        });
 
         buttonGroup1.add(jradNameKey);
         jradNameKey.setText(resourceMap.getString("jradNameKey.text")); // NOI18N
         jradNameKey.setName("jradNameKey"); // NOI18N
+        jradNameKey.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jradNameKeyItemStateChanged(evt);
+            }
+        });
 
         cmbKeys.setFont(resourceMap.getFont("cmbKeys.font")); // NOI18N
         cmbKeys.setName("cmbKeys"); // NOI18N
@@ -463,6 +477,14 @@ public class EmpListView extends FrameView {
                 .addContainerGap(12, Short.MAX_VALUE))
         );
 
+        jbtnNext.setText(resourceMap.getString("jbtnNext.text")); // NOI18N
+        jbtnNext.setName("jbtnNext"); // NOI18N
+        jbtnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnNextActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
@@ -475,15 +497,18 @@ public class EmpListView extends FrameView {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
                 .addComponent(jradNameKey)
                 .addGap(45, 45, 45))
-            .addGroup(mainPanelLayout.createSequentialGroup()
-                .addGap(166, 166, 166)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(cmbKeys, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addGap(166, 166, 166)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cmbKeys, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jbtnNext))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(35, 35, 35))
         );
         mainPanelLayout.setVerticalGroup(
@@ -497,10 +522,11 @@ public class EmpListView extends FrameView {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(cmbKeys, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbKeys, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jbtnNext))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(49, Short.MAX_VALUE))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         menuBar.setName("menuBar"); // NOI18N
@@ -516,6 +542,15 @@ public class EmpListView extends FrameView {
             }
         });
         fileMenu.add(jmnuLoadCSV);
+
+        jmnuSaveCSV.setText(resourceMap.getString("jmnuSaveCSV.text")); // NOI18N
+        jmnuSaveCSV.setName("jmnuSaveCSV"); // NOI18N
+        jmnuSaveCSV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmnuSaveCSVActionPerformed(evt);
+            }
+        });
+        fileMenu.add(jmnuSaveCSV);
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(emplist.EmpListApp.class).getContext().getActionMap(EmpListView.class, this);
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
@@ -619,12 +654,72 @@ public class EmpListView extends FrameView {
             return;
         }
         Employee emp = null;
-        if(jradHashMap.isSelected()) {
+        if(jradNameKey.isSelected()) {
+            emp = (Employee)empsByName.get((String) cmbKeys.getSelectedItem());
+        } else {
             Long eno = (Long) cmbKeys.getSelectedItem();
             emp = (Employee) emps.get(eno);            
         }
         DisplayValues(emp);
     }//GEN-LAST:event_cmbKeysItemStateChanged
+
+    private void jradTreeMapItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jradTreeMapItemStateChanged
+
+        if(jradTreeMap.isSelected()) {
+            // clear form
+            clearForm();
+            cmbKeys_build(); // build the combo box with the hashmap keys
+        }
+    }//GEN-LAST:event_jradTreeMapItemStateChanged
+
+    private void jradNameKeyItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jradNameKeyItemStateChanged
+        
+        if(jradNameKey.isSelected()) {
+            clearForm();
+            // build new map with name keys
+            empsByName = new TreeMap<>();
+            for(Map.Entry<Long, Employee> entry : emps.entrySet()) {
+                Employee e = entry.getValue();
+                String nm = e.getLastNm() + ", " + e.getFirstNm() + " " + e.getMiddleNm();
+                empsByName.put(nm, e);
+            }
+            cmbKeys_build();
+        }
+    }//GEN-LAST:event_jradNameKeyItemStateChanged
+
+    private void jbtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnNextActionPerformed
+        // to get here, they must have selected something in the combo box so we can use it as the controller
+        statusMessageLabel.setText("");
+        int i = cmbKeys.getSelectedIndex();
+        if(i < cmbKeys.getItemCount() - 1) {
+            cmbKeys.setSelectedIndex(i + 1); // changes state changed event so it fires
+        } else {
+            statusMessageLabel.setText("At end of employee list.");
+        }
+    }//GEN-LAST:event_jbtnNextActionPerformed
+
+    private void jmnuSaveCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmnuSaveCSVActionPerformed
+        statusMessageLabel.setText("");
+        
+        
+        buttonGroup1.clearSelection();
+        
+        clearForm();
+        JFileChooser f = new JFileChooser(".");
+        f.setDialogTitle("Select Employee Output File");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV File (.csv)", "csv");
+        
+        f.setFileFilter(filter);
+        JDialog dg = new JDialog(); // show open window, container for the chooser pop up
+        int rval = f.showSaveDialog(dg);
+        if (rval == JFileChooser.CANCEL_OPTION) {
+            statusMessageLabel.setText("Save canceled.");            
+        } else {
+            // read and return hashmap of file contents
+            String msg = EmpIO.setEmps(f.getSelectedFile().getAbsolutePath(), emps);
+            statusMessageLabel.setText(msg);
+        }
+    }//GEN-LAST:event_jmnuSaveCSVActionPerformed
 
     
     
@@ -639,6 +734,21 @@ public class EmpListView extends FrameView {
                 cmbKeys.addItem(k);
             }
             cmbKeys.setSelectedIndex(-1); // default state is no selection
+        } else if(jradTreeMap.isSelected()) {
+            // an alternative to building the key set, pull keys entry by entry
+            TreeMap<Long, Employee> treemap = new TreeMap<>(emps);
+            for(Map.Entry<Long, Employee> entry : treemap.entrySet()) {
+                Long k = entry.getKey();
+                cmbKeys.addItem(k);
+            }
+            cmbKeys.setSelectedIndex(-1);
+        } else if (jradNameKey.isSelected()) {
+            for(Map.Entry<String, Employee> entry : empsByName.entrySet()) {
+                cmbKeys.addItem(entry.getKey());
+            }
+            cmbKeys.setSelectedIndex(-1);
+        } else {
+            statusMessageLabel.setText("No map selected for build.");
         }
         loading = false;
     }
@@ -698,7 +808,9 @@ public class EmpListView extends FrameView {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton jbtnNext;
     private javax.swing.JMenuItem jmnuLoadCSV;
+    private javax.swing.JMenuItem jmnuSaveCSV;
     private javax.swing.JRadioButton jradHashMap;
     private javax.swing.JRadioButton jradNameKey;
     private javax.swing.JRadioButton jradTreeMap;
