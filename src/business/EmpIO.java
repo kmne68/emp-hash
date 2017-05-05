@@ -95,9 +95,11 @@ public class EmpIO {
         int empsout = 0;
 
         // employee object manages its own data lock
+        // Empno, Firstname, Lastname, MiddleInit, Suffix, Address1, Address2, City, State, Zip, Phone, Gender, Status, HireDate, TerminateDt, PayCd
         try {
             PrintWriter out = new PrintWriter(new FileWriter(absolutePath));
             Iterator<Map.Entry<Long, Employee>> it = emps.entrySet().iterator();
+            out.println("Empno, Firstname, Lastname, MiddleInit, Suffix, Address1, Address2, City, State, Zip, Phone, Gender, Status, HireDate, TerminateDt, PayCd");
             while (it.hasNext()) {
                 Map.Entry<Long, Employee> entry = it.next();
                 out.println(entry.getValue().toString());
