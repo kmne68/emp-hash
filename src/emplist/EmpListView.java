@@ -756,6 +756,21 @@ public class EmpListView extends FrameView {
         boolean result;
         if (jradNameKey.isSelected()) {
             // operate on empsByName map
+            emp = getEmpFromForm();
+            if(emp != null) {
+                String newKey = emp.getLastNm() + ", " +
+                        emp.getFirstNm() + " " +
+                        emp.getMiddleNm();
+                if(((String) cmbKeys.getSelectedItem()).equals(newKey)) {
+                    empsByName.put(newKey, emp);
+                    statusMessageLabel.setText("Employee updated.");
+                } else {
+                    empsByName.remove((String)cmbKeys.getSelectedItem());
+                    empsByName.put(newKey, emp);
+                    statusMessageLabel.setText("Employee updated with new name.");
+                    
+                }
+            }
         } else {
             // update emps hashmap
             emp = getEmpFromForm();
@@ -769,7 +784,8 @@ public class EmpListView extends FrameView {
                 }
             }
         }
-
+        clearForm();
+        cmbKeys_build();
     }//GEN-LAST:event_jbtnUpdateActionPerformed
 
     private void jbtnPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnPreviousActionPerformed
