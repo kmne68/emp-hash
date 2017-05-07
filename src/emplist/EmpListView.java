@@ -54,6 +54,8 @@ public class EmpListView extends FrameView {
             screenmap.put(getnm, f);
         }
 
+        jbtnCancel.setVisible(false);
+        
         // status bar initialization - message timeout, idle icon and busy animation, etc
         ResourceMap resourceMap = getResourceMap();
         int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
@@ -169,10 +171,13 @@ public class EmpListView extends FrameView {
         jbtnNext = new javax.swing.JButton();
         jbtnUpdate = new javax.swing.JButton();
         jbtnPrevious = new javax.swing.JButton();
+        jbtnAdd = new javax.swing.JButton();
+        jbtnCancel = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         jmnuLoadCSV = new javax.swing.JMenuItem();
         jmnuSaveCSV = new javax.swing.JMenuItem();
+        jmnuSaveXML = new javax.swing.JMenuItem();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
@@ -501,6 +506,22 @@ public class EmpListView extends FrameView {
             }
         });
 
+        jbtnAdd.setText(resourceMap.getString("jbtnAdd.text")); // NOI18N
+        jbtnAdd.setName("jbtnAdd"); // NOI18N
+        jbtnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnAddActionPerformed(evt);
+            }
+        });
+
+        jbtnCancel.setText(resourceMap.getString("jbtnCancel.text")); // NOI18N
+        jbtnCancel.setName("jbtnCancel"); // NOI18N
+        jbtnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnCancelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
@@ -526,6 +547,10 @@ public class EmpListView extends FrameView {
                         .addComponent(jbtnNext))
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addComponent(jbtnUpdate)
+                        .addGap(145, 145, 145)
+                        .addComponent(jbtnAdd)
+                        .addGap(30, 30, 30)
+                        .addComponent(jbtnCancel)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(35, 35, 35))
@@ -547,8 +572,15 @@ public class EmpListView extends FrameView {
                         .addComponent(jbtnPrevious)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22)
-                .addComponent(jbtnUpdate)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addComponent(jbtnUpdate))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jbtnAdd)
+                            .addComponent(jbtnCancel))))
                 .addContainerGap())
         );
 
@@ -574,6 +606,15 @@ public class EmpListView extends FrameView {
             }
         });
         fileMenu.add(jmnuSaveCSV);
+
+        jmnuSaveXML.setText(resourceMap.getString("jmnuSaveXML.text")); // NOI18N
+        jmnuSaveXML.setName("jmnuSaveXML"); // NOI18N
+        jmnuSaveXML.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmnuSaveXMLActionPerformed(evt);
+            }
+        });
+        fileMenu.add(jmnuSaveXML);
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(emplist.EmpListApp.class).getContext().getActionMap(EmpListView.class, this);
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
@@ -800,6 +841,77 @@ public class EmpListView extends FrameView {
         }
     }//GEN-LAST:event_jbtnPreviousActionPerformed
 
+    
+    private void jbtnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAddActionPerformed
+        statusMessageLabel.setText("");
+        
+        if(jbtnAdd.getText().equals("Add")) {
+            clearForm();
+            cmbKeys.setSelectedIndex(-1);
+            jbtnCancel.setVisible(true);
+            statusMessageLabel.setText("Enter employee data and click 'Post new'");
+            jbtnAdd.setText("Post New");
+            jtxtEmpNo.requestFocusInWindow();
+        } else {
+            // process the new record...
+            Employee emp = getEmpFromForm();
+            if(emp != null) {
+                if(emp.getEmpNo() <= 0) {
+                    statusMessageLabel.setText("Illegal employee number.");
+                } else if (emp.getLastNm().isEmpty() &&
+                        emp.getFirstNm().isEmpty() && 
+                        emp.getMiddleNm().isEmpty()) {
+                    statusMessageLabel.setText("Missing employee name.");
+                } else {
+                    if(jradNameKey.isSelected()) {
+                        String key = emp.getLastNm() + ", " +
+                                emp.getFirstNm() + " " +
+                                emp.getMiddleNm();
+                        empsByName.put(key, emp);
+                    } else {
+                        emps.put(emp.getEmpNo(), emp);
+                    }
+                    clearForm();
+                    jbtnAdd.setText("Add");
+                    jbtnCancel.setVisible(false);
+                    statusMessageLabel.setText("Employee " + emp.getEmpNo() + " added");
+                    cmbKeys_build();
+                }
+            }
+        }
+
+    }//GEN-LAST:event_jbtnAddActionPerformed
+
+    private void jbtnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnCancelActionPerformed
+        statusMessageLabel.setText("Add canceled.");
+        clearForm();
+        jbtnAdd.setText("Add");
+        jbtnCancel.setVisible(false);
+        cmbKeys.setSelectedIndex(-1);
+    }//GEN-LAST:event_jbtnCancelActionPerformed
+
+    private void jmnuSaveXMLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmnuSaveXMLActionPerformed
+        statusMessageLabel.setText("");
+
+        buttonGroup1.clearSelection();
+
+        clearForm();
+        JFileChooser f = new JFileChooser(".");
+        f.setDialogTitle("Select Employee Output File");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV File (.csv)", "csv");
+
+        f.setFileFilter(filter);
+        JDialog dg = new JDialog(); // show open window, container for the chooser pop up
+        int rval = f.showSaveDialog(dg);
+        if (rval == JFileChooser.CANCEL_OPTION) {
+            statusMessageLabel.setText("Save canceled.");
+        } else {
+            // read and return hashmap of file contents
+            String msg = EmpIO.setEmps(f.getSelectedFile().getAbsolutePath(), emps);
+            statusMessageLabel.setText(msg);
+        }
+    }//GEN-LAST:event_jmnuSaveXMLActionPerformed
+
     private void cmbKeys_build() {
 
         loading = true;
@@ -926,11 +1038,14 @@ public class EmpListView extends FrameView {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton jbtnAdd;
+    private javax.swing.JButton jbtnCancel;
     private javax.swing.JButton jbtnNext;
     private javax.swing.JButton jbtnPrevious;
     private javax.swing.JButton jbtnUpdate;
     private javax.swing.JMenuItem jmnuLoadCSV;
     private javax.swing.JMenuItem jmnuSaveCSV;
+    private javax.swing.JMenuItem jmnuSaveXML;
     private javax.swing.JRadioButton jradHashMap;
     private javax.swing.JRadioButton jradNameKey;
     private javax.swing.JRadioButton jradTreeMap;
