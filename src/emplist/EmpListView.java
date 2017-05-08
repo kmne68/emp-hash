@@ -898,7 +898,7 @@ public class EmpListView extends FrameView {
         clearForm();
         JFileChooser f = new JFileChooser(".");
         f.setDialogTitle("Select Employee Output File");
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV File (.csv)", "csv");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("XML File (.xml)", "csv");
 
         f.setFileFilter(filter);
         JDialog dg = new JDialog(); // show open window, container for the chooser pop up

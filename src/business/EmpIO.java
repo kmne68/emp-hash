@@ -10,9 +10,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  *
@@ -110,6 +113,83 @@ public class EmpIO {
             // must output header line
         } catch (Exception e) {
             msg = "Save Error: " + e.getMessage();
+        }
+        return msg;
+    }
+    
+    
+    public static String setEmpsXML(String path, Map<Long, Employee> emps) {
+        int countEmpsXML = 0;
+        String msg = "";
+        int intvar = 0;
+        long longvar = 0;
+        String stringvar = "";
+        
+        try{
+            Iterator<Map.Entry<Long, Employee>> it = emps.entrySet().iterator();
+            
+            XMLOutputFactory outFactory = XMLOutputFactory.newFactory();
+            FileWriter filewriter = new FileWriter(path);
+            XMLStreamWriter writer = outFactory.createXMLStreamWriter(filewriter);
+            writer.writeStartDocument("1.0");
+            writer.writeStartElement("Employees");
+            
+            while(it.hasNext()) {
+                Map.Entry<Long, Employee> empentry = it.next();
+                Employee emp = empentry.getValue();
+                Class empclass = emp.getClass();
+                
+                writer.writeStartElement("Employee");
+                writer.writeAttribute("Empno", String.valueOf(emp.getEmpNo()));
+                Method[] methods = empclass.getDeclaredMethods();
+                for(Method m : methods) {
+                    if(m.getName().startsWith("get")) {
+                        switch(m.getName()) {
+                            case "getEmpNo" :
+                                // no action - empno is an attribute
+                                break;
+                            case "getPhone":
+                                try {
+                                    longvar = (Long) (m.invoke(emp));
+                                    stringvar = String.valueOf(longvar);
+                                } catch (Exception e) {
+                                    stringvar = "";
+                                }
+                                break;
+                            case "getPayCd":
+                                try{
+                                    intvar = (int) (m.invoke(emp));
+                                    stringvar = String.valueOf(intvar);
+                                } catch(Exception e) {
+                                    stringvar = "";
+                                }
+                                break;
+                            default:
+                                try {
+                                    stringvar = (String) m.invoke(emp);
+                                } catch (Exception e) {
+                                    stringvar = "";
+                                }
+                                break;
+                        } // end switch
+                        // skip employee number as it was included already
+                        if(!m.getName().equals("getEmpNo")) {
+                            writer.writeStartElement(m.getName().substring(3));
+                            writer.writeCharacters(stringvar);
+                            writer.writeEndElement();
+                        } // end writeElement
+                    } // end if for get method
+                } // end for loop
+                writer.writeEndElement();
+                countEmpsXML++;
+
+            } // end while loop
+            writer.writeEndElement(); // end Employees
+            writer.flush();
+            writer.close();
+            msg = countEmpsXML + " employees writter.";
+        } catch(Exception e) {
+            msg = "XML save error: " + e.getMessage();
         }
         return msg;
     }
