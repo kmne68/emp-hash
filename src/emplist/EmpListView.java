@@ -898,7 +898,7 @@ public class EmpListView extends FrameView {
         clearForm();
         JFileChooser f = new JFileChooser(".");
         f.setDialogTitle("Select Employee Output File");
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("XML File (.xml)", "csv");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("XML File (.xml)", "xml");
 
         f.setFileFilter(filter);
         JDialog dg = new JDialog(); // show open window, container for the chooser pop up
@@ -907,7 +907,7 @@ public class EmpListView extends FrameView {
             statusMessageLabel.setText("Save canceled.");
         } else {
             // read and return hashmap of file contents
-            String msg = EmpIO.setEmps(f.getSelectedFile().getAbsolutePath(), emps);
+            String msg = EmpIO.setEmpsXML(f.getSelectedFile().getAbsolutePath(), emps);
             statusMessageLabel.setText(msg);
         }
     }//GEN-LAST:event_jmnuSaveXMLActionPerformed

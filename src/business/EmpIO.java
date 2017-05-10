@@ -121,9 +121,9 @@ public class EmpIO {
     public static String setEmpsXML(String path, Map<Long, Employee> emps) {
         int countEmpsXML = 0;
         String msg = "";
-        int intvar = 0;
-        long longvar = 0;
-        String stringvar = "";
+        int v1 = 0;
+        long v2 = 0;
+        String val = "";
         
         try{
             Iterator<Map.Entry<Long, Employee>> it = emps.entrySet().iterator();
@@ -150,44 +150,44 @@ public class EmpIO {
                                 break;
                             case "getPhone":
                                 try {
-                                    longvar = (Long) (m.invoke(emp));
-                                    stringvar = String.valueOf(longvar);
+                                    v2 = (Long) (m.invoke(emp));
+                                    val = String.valueOf(v2);
                                 } catch (Exception e) {
-                                    stringvar = "";
+                                    val = "";
                                 }
                                 break;
                             case "getPayCd":
                                 try{
-                                    intvar = (int) (m.invoke(emp));
-                                    stringvar = String.valueOf(intvar);
+                                    v1 = (int) (m.invoke(emp));
+                                    val = String.valueOf(v1);
                                 } catch(Exception e) {
-                                    stringvar = "";
+                                    val = "";
                                 }
                                 break;
                             default:
                                 try {
-                                    stringvar = (String) m.invoke(emp);
+                                    val = (String) m.invoke(emp);
                                 } catch (Exception e) {
-                                    stringvar = "";
+                                    val = "";
                                 }
                                 break;
                         } // end switch
                         // skip employee number as it was included already
                         if(!m.getName().equals("getEmpNo")) {
                             writer.writeStartElement(m.getName().substring(3));
-                            writer.writeCharacters(stringvar);
+                            writer.writeCharacters(val);
                             writer.writeEndElement();
                         } // end writeElement
                     } // end if for get method
                 } // end for loop
-                writer.writeEndElement();
+                writer.writeEndElement(); // end Employee
                 countEmpsXML++;
 
             } // end while loop
-            writer.writeEndElement(); // end Employees
+            writer.writeEndElement(); // end of Employees
             writer.flush();
             writer.close();
-            msg = countEmpsXML + " employees writter.";
+            msg = countEmpsXML + " employees written.";
         } catch(Exception e) {
             msg = "XML save error: " + e.getMessage();
         }
