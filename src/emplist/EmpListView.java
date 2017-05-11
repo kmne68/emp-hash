@@ -957,63 +957,32 @@ public class EmpListView extends FrameView {
 
         statusMessageLabel.setText("");
         Employee emp = getEmpFromForm();
-        JFrame frame = new JFrame();
-        
-    //     int n = JOptionPane.showConfirmDialog(null, "Would you like green eggs and ham?", "An Inane Question", JOptionPane.YES_NO_OPTION);
 
-        int dialogResult = 0; //JOptionPane.YES_NO_OPTION;
-        System.out.println("dialogResult = " + dialogResult);
-        //    if (emp != null) {
+        int dialogResult = JOptionPane.showConfirmDialog(null, "This will delete the employee. Do you wish to continue?", "Warning", JOptionPane.YES_NO_OPTION);
 
-        JOptionPane.showConfirmDialog(null, "This will delete the employee. Do you wish to continue?", "Warning", dialogResult);
+        if (emp != null) {
+            if (dialogResult == JOptionPane.YES_OPTION) {
 
-        if (dialogResult == JOptionPane.YES_OPTION) {
+                System.out.println("dialogResult = " + dialogResult);
+                emps.remove(emp.getEmpNo());
+                cmbKeys_build();
+                statusMessageLabel.setText("Employee deleted");
+                clearForm();
+
+            } else if (dialogResult == JOptionPane.NO_OPTION) {
+                System.out.println("dialogResult = " + dialogResult);
+                statusMessageLabel.setText("Employee not deleted");
+                return;
+            }
+
+            cmbKeys.setSelectedIndex(-1);
+            jbtnCancel.setVisible(true);
+            jtxtEmpNo.requestFocusInWindow();
+        } else {
+            statusMessageLabel.setText("No employee selected.");
+            jbtnDelete.setVisible(false);
             
-            System.out.println("dialogResult = " + dialogResult);
-            emps.remove(emp.getEmpNo());
-            cmbKeys_build();
-            statusMessageLabel.setText("Employee deleted");
-            clearForm();
-
-        } else if (dialogResult == JOptionPane.NO_OPTION) {
-            System.out.println("dialogResult = " + dialogResult);
-            statusMessageLabel.setText("Employee not deleted");
-            return;
         }
-
-        cmbKeys.setSelectedIndex(-1);
-        jbtnCancel.setVisible(true);
-
-        //      jbtnDelete.setVisible(false);
-        jtxtEmpNo.requestFocusInWindow();
-
-        /*else {
-            // process the new record...
-            
-            if(emp != null) {
-                if(emp.getEmpNo() <= 0) {
-                    statusMessageLabel.setText("Illegal employee number.");
-                } else if (emp.getLastNm().isEmpty() &&
-                        emp.getFirstNm().isEmpty() && 
-                        emp.getMiddleNm().isEmpty()) {
-                    statusMessageLabel.setText("Missing employee name.");
-                } else {
-                    if(jradNameKey.isSelected()) {
-                        String key = emp.getLastNm() + ", " +
-                                emp.getFirstNm() + " " +
-                                emp.getMiddleNm();
-                        empsByName.put(key, emp);
-                    } else {
-                        emps.put(emp.getEmpNo(), emp);
-                    }
-                    clearForm();
-                    jbtnAdd.setText("Add");
-                    jbtnCancel.setVisible(false);
-                    statusMessageLabel.setText("Employee " + emp.getEmpNo() + " added");
-                    cmbKeys_build();
-                } 
-            } 
-        } */
     }//GEN-LAST:event_jbtnDeleteActionPerformed
 
     private void cmbKeys_build() {
