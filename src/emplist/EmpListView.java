@@ -22,6 +22,7 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -55,7 +56,7 @@ public class EmpListView extends FrameView {
         }
 
         jbtnCancel.setVisible(false);
-        
+
         // status bar initialization - message timeout, idle icon and busy animation, etc
         ResourceMap resourceMap = getResourceMap();
         int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
@@ -815,18 +816,18 @@ public class EmpListView extends FrameView {
         if (jradNameKey.isSelected()) {
             // operate on empsByName map
             emp = getEmpFromForm();
-            if(emp != null) {
-                String newKey = emp.getLastNm() + ", " +
-                        emp.getFirstNm() + " " +
-                        emp.getMiddleNm();
-                if(((String) cmbKeys.getSelectedItem()).equals(newKey)) {
+            if (emp != null) {
+                String newKey = emp.getLastNm() + ", "
+                        + emp.getFirstNm() + " "
+                        + emp.getMiddleNm();
+                if (((String) cmbKeys.getSelectedItem()).equals(newKey)) {
                     empsByName.put(newKey, emp);
                     statusMessageLabel.setText("Employee updated.");
                 } else {
-                    empsByName.remove((String)cmbKeys.getSelectedItem());
+                    empsByName.remove((String) cmbKeys.getSelectedItem());
                     empsByName.put(newKey, emp);
                     statusMessageLabel.setText("Employee updated with new name.");
-                    
+
                 }
             }
         } else {
@@ -838,7 +839,7 @@ public class EmpListView extends FrameView {
                     statusMessageLabel.setText("Employee updated.");
                 } else {
                     statusMessageLabel.setText("Empno cannot be changed.");
-                    jtxtEmpNo.setText(String.valueOf((Long)cmbKeys.getSelectedItem()));
+                    jtxtEmpNo.setText(String.valueOf((Long) cmbKeys.getSelectedItem()));
                 }
             }
         }
@@ -847,7 +848,7 @@ public class EmpListView extends FrameView {
     }//GEN-LAST:event_jbtnUpdateActionPerformed
 
     private void jbtnPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnPreviousActionPerformed
-                // to get here, they must have selected something in the combo box so we can use it as the controller
+        // to get here, they must have selected something in the combo box so we can use it as the controller
         statusMessageLabel.setText("");
         int i = cmbKeys.getSelectedIndex();
         System.out.println("selected index = " + i);
@@ -858,11 +859,11 @@ public class EmpListView extends FrameView {
         }
     }//GEN-LAST:event_jbtnPreviousActionPerformed
 
-    
+
     private void jbtnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAddActionPerformed
         statusMessageLabel.setText("");
-        
-        if(jbtnAdd.getText().equals("Add")) {
+
+        if (jbtnAdd.getText().equals("Add")) {
             clearForm();
             cmbKeys.setSelectedIndex(-1);
             jbtnCancel.setVisible(true);
@@ -872,18 +873,18 @@ public class EmpListView extends FrameView {
         } else {
             // process the new record...
             Employee emp = getEmpFromForm();
-            if(emp != null) {
-                if(emp.getEmpNo() <= 0) {
+            if (emp != null) {
+                if (emp.getEmpNo() <= 0) {
                     statusMessageLabel.setText("Illegal employee number.");
-                } else if (emp.getLastNm().isEmpty() &&
-                        emp.getFirstNm().isEmpty() && 
-                        emp.getMiddleNm().isEmpty()) {
+                } else if (emp.getLastNm().isEmpty()
+                        && emp.getFirstNm().isEmpty()
+                        && emp.getMiddleNm().isEmpty()) {
                     statusMessageLabel.setText("Missing employee name.");
                 } else {
-                    if(jradNameKey.isSelected()) {
-                        String key = emp.getLastNm() + ", " +
-                                emp.getFirstNm() + " " +
-                                emp.getMiddleNm();
+                    if (jradNameKey.isSelected()) {
+                        String key = emp.getLastNm() + ", "
+                                + emp.getFirstNm() + " "
+                                + emp.getMiddleNm();
                         empsByName.put(key, emp);
                     } else {
                         emps.put(emp.getEmpNo(), emp);
@@ -930,7 +931,7 @@ public class EmpListView extends FrameView {
     }//GEN-LAST:event_jmnuSaveXMLActionPerformed
 
     private void jmnuLoadXMLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmnuLoadXMLActionPerformed
-        
+
         statusMessageLabel.setText("");
         // do load then choose button
         buttonGroup1.clearSelection();
@@ -953,22 +954,40 @@ public class EmpListView extends FrameView {
     }//GEN-LAST:event_jmnuLoadXMLActionPerformed
 
     private void jbtnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnDeleteActionPerformed
-        
+
         statusMessageLabel.setText("");
         Employee emp = getEmpFromForm();
+        JFrame frame = new JFrame();
         
-        if(emp != null) {
+    //     int n = JOptionPane.showConfirmDialog(null, "Would you like green eggs and ham?", "An Inane Question", JOptionPane.YES_NO_OPTION);
+
+        int dialogResult = 0; //JOptionPane.YES_NO_OPTION;
+        System.out.println("dialogResult = " + dialogResult);
+        //    if (emp != null) {
+
+        JOptionPane.showConfirmDialog(null, "This will delete the employee. Do you wish to continue?", "Warning", dialogResult);
+
+        if (dialogResult == JOptionPane.YES_OPTION) {
             
+            System.out.println("dialogResult = " + dialogResult);
             emps.remove(emp.getEmpNo());
             cmbKeys_build();
-            
-            clearForm();
-            cmbKeys.setSelectedIndex(-1);
-            jbtnCancel.setVisible(true);
             statusMessageLabel.setText("Employee deleted");
-      //      jbtnDelete.setVisible(false);
-            jtxtEmpNo.requestFocusInWindow();
-        }  /*else {
+            clearForm();
+
+        } else if (dialogResult == JOptionPane.NO_OPTION) {
+            System.out.println("dialogResult = " + dialogResult);
+            statusMessageLabel.setText("Employee not deleted");
+            return;
+        }
+
+        cmbKeys.setSelectedIndex(-1);
+        jbtnCancel.setVisible(true);
+
+        //      jbtnDelete.setVisible(false);
+        jtxtEmpNo.requestFocusInWindow();
+
+        /*else {
             // process the new record...
             
             if(emp != null) {
@@ -1091,7 +1110,7 @@ public class EmpListView extends FrameView {
                         m = eclass.getMethod(setmethod, String.class);
                         m.invoke(em, f.getText());
                         break;
-                        
+
                 } // switch
             } // end for
         } catch (Exception e) {
