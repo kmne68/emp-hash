@@ -173,10 +173,12 @@ public class EmpListView extends FrameView {
         jbtnPrevious = new javax.swing.JButton();
         jbtnAdd = new javax.swing.JButton();
         jbtnCancel = new javax.swing.JButton();
+        jbtnDelete = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         jmnuLoadCSV = new javax.swing.JMenuItem();
         jmnuSaveCSV = new javax.swing.JMenuItem();
+        jmnuLoadXML = new javax.swing.JMenuItem();
         jmnuSaveXML = new javax.swing.JMenuItem();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
@@ -522,6 +524,14 @@ public class EmpListView extends FrameView {
             }
         });
 
+        jbtnDelete.setText(resourceMap.getString("jbtnDelete.text")); // NOI18N
+        jbtnDelete.setName("jbtnDelete"); // NOI18N
+        jbtnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnDeleteActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
@@ -547,11 +557,12 @@ public class EmpListView extends FrameView {
                         .addComponent(jbtnNext))
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addComponent(jbtnUpdate)
-                        .addGap(145, 145, 145)
-                        .addComponent(jbtnAdd)
-                        .addGap(30, 30, 30)
+                        .addGap(106, 106, 106)
                         .addComponent(jbtnCancel)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(68, 68, 68)
+                        .addComponent(jbtnAdd)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jbtnDelete))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(35, 35, 35))
         );
@@ -565,22 +576,19 @@ public class EmpListView extends FrameView {
                     .addComponent(jradNameKey))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jbtnNext, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jbtnNext, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE)
                     .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel1)
                         .addComponent(cmbKeys, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jbtnPrevious)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addComponent(jbtnUpdate))
-                    .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jbtnAdd)
-                            .addComponent(jbtnCancel))))
+                .addGap(22, 22, 22)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jbtnUpdate)
+                    .addComponent(jbtnCancel)
+                    .addComponent(jbtnAdd)
+                    .addComponent(jbtnDelete))
                 .addContainerGap())
         );
 
@@ -606,6 +614,15 @@ public class EmpListView extends FrameView {
             }
         });
         fileMenu.add(jmnuSaveCSV);
+
+        jmnuLoadXML.setText(resourceMap.getString("jmnuLoadXML.text")); // NOI18N
+        jmnuLoadXML.setName("jmnuLoadXML"); // NOI18N
+        jmnuLoadXML.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmnuLoadXMLActionPerformed(evt);
+            }
+        });
+        fileMenu.add(jmnuLoadXML);
 
         jmnuSaveXML.setText(resourceMap.getString("jmnuSaveXML.text")); // NOI18N
         jmnuSaveXML.setName("jmnuSaveXML"); // NOI18N
@@ -912,6 +929,74 @@ public class EmpListView extends FrameView {
         }
     }//GEN-LAST:event_jmnuSaveXMLActionPerformed
 
+    private void jmnuLoadXMLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmnuLoadXMLActionPerformed
+        
+        statusMessageLabel.setText("");
+        // do load then choose button
+        buttonGroup1.clearSelection();
+
+        clearForm();
+        JFileChooser f = new JFileChooser(".");
+        f.setDialogTitle("Select Employee File");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("XML File (.xml)", "xml");
+
+        f.setFileFilter(filter);
+        JDialog dg = new JDialog(); // show open window, container for the chooser pop up
+        int rval = f.showOpenDialog(dg);
+        if (rval == JFileChooser.CANCEL_OPTION) {
+            statusMessageLabel.setText("Open canceled.");
+        } else {
+            // read and return hashmap of file contents
+            this.emps = EmpIO.getEmpsXML(f.getSelectedFile().getAbsolutePath());
+            statusMessageLabel.setText("Size of emps = " + emps.size());
+        }
+    }//GEN-LAST:event_jmnuLoadXMLActionPerformed
+
+    private void jbtnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnDeleteActionPerformed
+        
+        statusMessageLabel.setText("");
+        Employee emp = getEmpFromForm();
+        
+        if(emp != null) {
+            
+            emps.remove(emp.getEmpNo());
+            cmbKeys_build();
+            
+            clearForm();
+            cmbKeys.setSelectedIndex(-1);
+            jbtnCancel.setVisible(true);
+            statusMessageLabel.setText("Employee deleted");
+      //      jbtnDelete.setVisible(false);
+            jtxtEmpNo.requestFocusInWindow();
+        }  /*else {
+            // process the new record...
+            
+            if(emp != null) {
+                if(emp.getEmpNo() <= 0) {
+                    statusMessageLabel.setText("Illegal employee number.");
+                } else if (emp.getLastNm().isEmpty() &&
+                        emp.getFirstNm().isEmpty() && 
+                        emp.getMiddleNm().isEmpty()) {
+                    statusMessageLabel.setText("Missing employee name.");
+                } else {
+                    if(jradNameKey.isSelected()) {
+                        String key = emp.getLastNm() + ", " +
+                                emp.getFirstNm() + " " +
+                                emp.getMiddleNm();
+                        empsByName.put(key, emp);
+                    } else {
+                        emps.put(emp.getEmpNo(), emp);
+                    }
+                    clearForm();
+                    jbtnAdd.setText("Add");
+                    jbtnCancel.setVisible(false);
+                    statusMessageLabel.setText("Employee " + emp.getEmpNo() + " added");
+                    cmbKeys_build();
+                } 
+            } 
+        } */
+    }//GEN-LAST:event_jbtnDeleteActionPerformed
+
     private void cmbKeys_build() {
 
         loading = true;
@@ -1040,10 +1125,12 @@ public class EmpListView extends FrameView {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton jbtnAdd;
     private javax.swing.JButton jbtnCancel;
+    private javax.swing.JButton jbtnDelete;
     private javax.swing.JButton jbtnNext;
     private javax.swing.JButton jbtnPrevious;
     private javax.swing.JButton jbtnUpdate;
     private javax.swing.JMenuItem jmnuLoadCSV;
+    private javax.swing.JMenuItem jmnuLoadXML;
     private javax.swing.JMenuItem jmnuSaveCSV;
     private javax.swing.JMenuItem jmnuSaveXML;
     private javax.swing.JRadioButton jradHashMap;

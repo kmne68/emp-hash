@@ -14,7 +14,10 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
@@ -192,5 +195,73 @@ public class EmpIO {
             msg = "XML save error: " + e.getMessage();
         }
         return msg;
+    }
+    
+    public static Map<Long, Employee> getEmpsXML (String path) {
+        
+        Map<Long, Employee> emps = new HashMap<>();
+        Employee emp = null;
+        Class<?> empclass;
+        Method m;
+        long empno = 0;
+        String elementName;       
+        
+        try {
+            FileReader flr = new FileReader(path);
+            XMLInputFactory inFactory = XMLInputFactory.newFactory();
+            XMLStreamReader reader = inFactory.createXMLStreamReader(flr);
+            
+            while(reader.hasNext()) {
+                int eventType = reader.getEventType();
+                switch (eventType) {
+                    case XMLStreamConstants.START_ELEMENT:
+                        elementName=reader.getLocalName();
+                        if(!elementName.equals("Employees")) {
+                            if(elementName.equals("Employee")) {
+                                // the beginning of a new employee
+                                emp = new Employee();
+                                empno = Long.parseLong(reader.getAttributeValue(0));
+                                emp.setEmpNo(empno);
+                            } else {
+                                empclass = emp.getClass();
+                                try {
+                                    String setMethod = "set" + elementName;
+                                    switch(setMethod) {
+                                        case "setPhone":
+                                            m = empclass.getMethod(setMethod, Long.class);
+                                            m.invoke(emp, Long.parseLong(reader.getElementText()));
+                                            break;
+                                        case "setPayCd":
+                                            m = empclass.getMethod(setMethod, Integer.class);
+                                            m.invoke(emp, Integer.parseInt(reader.getElementText()));
+                                            break; 
+                                        default:
+                                            m = empclass.getMethod(setMethod, String.class);
+                                            m.invoke(emp, reader.getElementText());
+                                            break;
+                                    } // end of switch                           
+                                } catch (Exception e) {
+                                    // do nothing, no update to emp                                    
+                                } // end catch
+                            } // end else for non-Employees plural
+                        } // end if for !=Employees
+                        break; // end of start element case
+                    case XMLStreamConstants.END_ELEMENT:
+                        elementName = reader.getLocalName();
+                        if(elementName.equals("Employee")) {
+                            // finished an employee
+                            if(emp != null) {
+                                emps.put(emp.getEmpNo(), emp);
+                            }
+                        }
+                        break;
+                } // end outer switch for event type
+                reader.next();
+            } // end while
+            reader.close();
+        } catch (Exception e) {
+            emps = null;
+        }
+        return emps;
     }
 }
