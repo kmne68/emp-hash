@@ -5,18 +5,24 @@
  */
 package business;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Map;
+import javax.swing.JTextField;
+
 /**
  *
  * @author Keith
  */
 public class Employee {
-    
+
     private long empno, phone;
     private String lastnm, firstnm, middlenm, suffix;
     private String addr1, addr2, city, state, zip, gender;
     private String status, hiredt, terminateddt;
     private int paycd;
-    
+
     public Employee() {
         this.empno = 0;
         phone = 0;
@@ -34,7 +40,7 @@ public class Employee {
         hiredt = "";
         terminateddt = "";
         paycd = 0;
-        
+
     }
 
     /**
@@ -260,5 +266,111 @@ public class Employee {
     public void setPayCd(Integer paycd) {
         this.paycd = paycd;
     }
-    
+
+    public String toString(Employee emp) {
+
+        int intValue = 0;
+        long longValue = 0;
+   /*     Field[] fields = inspect(Employee.class);
+
+        for (Field f : fields) {
+
+        } */
+
+        String empString = "";
+        Class empclass = emp.getClass();
+        Method[] methods = empclass.getDeclaredMethods();
+
+        for (Method m : methods) {
+            if (m.getName().startsWith("get")) {
+                switch(m.getName()) {
+                            case "getEmpNo" :
+                                try {
+                                    longValue = (Long) (m.invoke(emp));
+                                    empString += String.valueOf(longValue) + ", ";
+                                } catch (Exception e) {
+                                    
+                                }                                    
+                                break;
+                            case "getPhone":
+                                try {
+                                    longValue = (Long) (m.invoke(emp));
+                                    empString += String.valueOf(longValue) + ", ";
+                                } catch (Exception e) {
+                                    
+                                }
+                                break;
+                            case "getPayCd":
+                                try{
+                                    intValue = (int) (m.invoke(emp));
+                                    empString += String.valueOf(intValue) + ", ";
+                                } catch(Exception e) {
+                                    
+                                }
+                                break;
+                            default:
+                                try {
+                                    String tempString = (String) m.invoke(emp);
+                                    empString += tempString + ", ";
+                                } catch (Exception e) {
+                                    
+                                }
+                                break;
+                        } // end switch
+            }
+        }
+/*
+        try {
+            if (emp != null) {
+                for (Method m : methods) {
+                    if (emp.) {
+                        switch (m.getName()) {
+                            case "getEmpNo":
+                            case "getPhone":
+                                Long eno = (Long) m.invoke(emp);
+                                f.setText(String.valueOf(eno));
+                                break;
+                            case "getPayCd":
+                                int phn = (int) m.invoke(emp);
+                                f.setText(String.valueOf(phn));
+                                break;
+                            default:
+                                String v = (String) m.invoke(emp);
+                                f.setText(v);
+                                break;
+                        } // end switch
+                    }
+                } // end if
+            } // end for
+        } catch (Exception e) {
+
+        } */
+        return empString;
+    }
+/*
+    static <T> Field[] inspect(Class<T> emp) {
+        Field[] fields = emp.getDeclaredFields();
+        System.out.printf("%d fields:%n", fields.length);
+        for (Field field : fields) {
+            System.out.printf("%s %s %s%n",
+                    Modifier.toString(field.getModifiers()),
+                    field.getType().getSimpleName(),
+                    field.getName()
+            );
+        }
+        return fields;
+    } */
+
+    /*    static <T> void inspect(Class<T> emp) {
+        Field[] fields = emp.getDeclaredFields();
+        System.out.printf("%d fields:%n", fields.length);
+        for (Field field : fields) {
+            System.out.printf("%s %s %s%n",
+                Modifier.toString(field.getModifiers()),
+                field.getType().getSimpleName(),
+                field.getName()
+            );
+        }
+    }
+     */
 }

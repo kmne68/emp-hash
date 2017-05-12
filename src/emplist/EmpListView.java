@@ -1019,6 +1019,10 @@ public class EmpListView extends FrameView {
 
         clearForm();
         // use reflection must obtain class definition for the object
+                
+        // test overridden toString method
+        System.out.println("empString " + emp.toString(emp));
+        
         Class empclass = emp.getClass();
         Method[] methods = empclass.getMethods();
 
@@ -1051,7 +1055,7 @@ public class EmpListView extends FrameView {
     private Employee getEmpFromForm() {
 
         Employee em = new Employee();
-
+        
         Class eclass = em.getClass();
         Method m; // to hold the get methods as they are invoked
         boolean result = true;
