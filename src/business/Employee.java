@@ -267,18 +267,14 @@ public class Employee {
         this.paycd = paycd;
     }
 
-    public String toString(Employee emp) {
+
+    @Override
+    public String toString() {
 
         int intValue = 0;
         long longValue = 0;
-   /*     Field[] fields = inspect(Employee.class);
-
-        for (Field f : fields) {
-
-        } */
-
         String empString = "";
-        Class empclass = emp.getClass();
+        Class empclass = this.getClass();
         Method[] methods = empclass.getDeclaredMethods();
 
         for (Method m : methods) {
@@ -286,7 +282,7 @@ public class Employee {
                 switch(m.getName()) {
                             case "getEmpNo" :
                                 try {
-                                    longValue = (Long) (m.invoke(emp));
+                                    longValue = (Long) (m.invoke(this));
                                     empString += String.valueOf(longValue) + ", ";
                                 } catch (Exception e) {
                                     
@@ -294,7 +290,7 @@ public class Employee {
                                 break;
                             case "getPhone":
                                 try {
-                                    longValue = (Long) (m.invoke(emp));
+                                    longValue = (Long) (m.invoke(this));
                                     empString += String.valueOf(longValue) + ", ";
                                 } catch (Exception e) {
                                     
@@ -302,7 +298,7 @@ public class Employee {
                                 break;
                             case "getPayCd":
                                 try{
-                                    intValue = (int) (m.invoke(emp));
+                                    intValue = (int) (m.invoke(this));
                                     empString += String.valueOf(intValue) + ", ";
                                 } catch(Exception e) {
                                     
@@ -310,7 +306,7 @@ public class Employee {
                                 break;
                             default:
                                 try {
-                                    String tempString = (String) m.invoke(emp);
+                                    String tempString = (String) m.invoke(this);
                                     empString += tempString + ", ";
                                 } catch (Exception e) {
                                     
@@ -319,58 +315,6 @@ public class Employee {
                         } // end switch
             }
         }
-/*
-        try {
-            if (emp != null) {
-                for (Method m : methods) {
-                    if (emp.) {
-                        switch (m.getName()) {
-                            case "getEmpNo":
-                            case "getPhone":
-                                Long eno = (Long) m.invoke(emp);
-                                f.setText(String.valueOf(eno));
-                                break;
-                            case "getPayCd":
-                                int phn = (int) m.invoke(emp);
-                                f.setText(String.valueOf(phn));
-                                break;
-                            default:
-                                String v = (String) m.invoke(emp);
-                                f.setText(v);
-                                break;
-                        } // end switch
-                    }
-                } // end if
-            } // end for
-        } catch (Exception e) {
-
-        } */
         return empString;
     }
-/*
-    static <T> Field[] inspect(Class<T> emp) {
-        Field[] fields = emp.getDeclaredFields();
-        System.out.printf("%d fields:%n", fields.length);
-        for (Field field : fields) {
-            System.out.printf("%s %s %s%n",
-                    Modifier.toString(field.getModifiers()),
-                    field.getType().getSimpleName(),
-                    field.getName()
-            );
-        }
-        return fields;
-    } */
-
-    /*    static <T> void inspect(Class<T> emp) {
-        Field[] fields = emp.getDeclaredFields();
-        System.out.printf("%d fields:%n", fields.length);
-        for (Field field : fields) {
-            System.out.printf("%s %s %s%n",
-                Modifier.toString(field.getModifiers()),
-                field.getType().getSimpleName(),
-                field.getName()
-            );
-        }
-    }
-     */
 }

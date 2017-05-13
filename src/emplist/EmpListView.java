@@ -56,7 +56,8 @@ public class EmpListView extends FrameView {
         }
 
         jbtnCancel.setVisible(false);
-
+        jbtnDelete.setVisible(false);
+        
         // status bar initialization - message timeout, idle icon and busy animation, etc
         ResourceMap resourceMap = getResourceMap();
         int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
@@ -955,33 +956,34 @@ public class EmpListView extends FrameView {
 
     private void jbtnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnDeleteActionPerformed
 
+    //    jbtnDelete.setVisible(false);
         statusMessageLabel.setText("");
         Employee emp = getEmpFromForm();
 
-        int dialogResult = JOptionPane.showConfirmDialog(null, "This will delete the employee. Do you wish to continue?", "Warning", JOptionPane.YES_NO_OPTION);
+        if (!jtxtEmpNo.getText().equals("")) {
+            jbtnDelete.setVisible(true);
+            int dialogResult = JOptionPane.showConfirmDialog(null, "This will delete the employee. Do you wish to continue?", "Warning", JOptionPane.YES_NO_OPTION);
 
-        if (emp != null) {
             if (dialogResult == JOptionPane.YES_OPTION) {
-
                 System.out.println("dialogResult = " + dialogResult);
                 emps.remove(emp.getEmpNo());
                 cmbKeys_build();
                 statusMessageLabel.setText("Employee deleted");
                 clearForm();
-
-            } else if (dialogResult == JOptionPane.NO_OPTION) {
+                jbtnDelete.setVisible(false);
+            } else {
                 System.out.println("dialogResult = " + dialogResult);
                 statusMessageLabel.setText("Employee not deleted");
                 return;
             }
 
             cmbKeys.setSelectedIndex(-1);
-            jbtnCancel.setVisible(true);
+    //        jbtnCancel.setVisible(true);
             jtxtEmpNo.requestFocusInWindow();
         } else {
             statusMessageLabel.setText("No employee selected.");
-            jbtnDelete.setVisible(false);
-            
+        
+
         }
     }//GEN-LAST:event_jbtnDeleteActionPerformed
 
@@ -1018,11 +1020,9 @@ public class EmpListView extends FrameView {
     private void DisplayValues(Employee emp) {
 
         clearForm();
-        // use reflection must obtain class definition for the object
-                
-        // test overridden toString method
-        System.out.println("empString " + emp.toString(emp));
-        
+
+        jbtnDelete.setVisible(true);
+        // use reflection must obtain class definition for the object        
         Class empclass = emp.getClass();
         Method[] methods = empclass.getMethods();
 
@@ -1055,7 +1055,7 @@ public class EmpListView extends FrameView {
     private Employee getEmpFromForm() {
 
         Employee em = new Employee();
-        
+
         Class eclass = em.getClass();
         Method m; // to hold the get methods as they are invoked
         boolean result = true;
